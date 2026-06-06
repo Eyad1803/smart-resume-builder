@@ -2,6 +2,7 @@ fastapi
 uvicorn[standard]
 motor
 pydantic
+email-validator
 pydantic-settings
 python-dotenv
 bcrypt>=4.0,<6
