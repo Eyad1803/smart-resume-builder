@@ -1,0 +1,48 @@
+name: AI PR Security Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  ai-security-review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install google-genai
+        run: pip install google-genai
+
+      - name: Generate diff and run AI reviewer
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          git fetch origin "${{ github.base_ref }}"
+          git diff "origin/${{ github.base_ref }}...HEAD" > pr.diff
+          python scripts/ai_reviewer.py < pr.diff > review.md || true
+
+      - name: Post review comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file review.md
+
+      - name: Fail on critical vulnerability
+        run: |
+          if grep -q "VULNERABILITY_FOUND" review.md; then
+            echo "Critical vulnerability detected by AI reviewer."
+            exit 1
+          fi

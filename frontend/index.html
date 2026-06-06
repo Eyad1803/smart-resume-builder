@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Resume Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon">SR</div>
+          <div>
+            <h1>Smart Resume</h1>
+            <p>Builder Demo</p>
+          </div>
+        </div>
+
+        <nav class="nav" id="nav"></nav>
+
+        <div class="sidebar-footer">
+          <div class="user-chip" id="user-chip">
+            <span class="user-dot"></span>
+            <span id="user-email">Guest</span>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="logout-btn" hidden>Sign out</button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="page-eyebrow">Welcome</p>
+            <h2 id="page-title">Smart Resume Builder</h2>
+          </div>
+          <a class="api-link" href="/docs" target="_blank" rel="noreferrer">API Docs</a>
+        </header>
+
+        <div class="alert alert-error" id="global-alert" hidden></div>
+        <section class="content" id="app-content"></section>
+      </main>
+    </div>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
