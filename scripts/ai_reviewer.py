@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import os
+import re
 import sys
 
 PROJECT_CONTEXT = """
@@ -72,6 +73,31 @@ def _safe_skip(message: str) -> None:
     print(f"SAFE_CODE\n{message}")
 
 
+def _safe_exception_message(exc: Exception, api_key: str | None = None) -> str:
+    """Return exception text with secrets redacted."""
+    message = str(exc).strip() or repr(exc)
+    if api_key:
+        message = message.replace(api_key, "[REDACTED]")
+    message = re.sub(r"AIza[\w-]+", "[REDACTED]", message)
+    message = re.sub(r"gsk_[\w-]+", "[REDACTED]", message)
+    message = re.sub(r"sk-[\w-]+", "[REDACTED]", message)
+    message = re.sub(
+        r'(?i)(api[_-]?key\s*[:=]\s*)[^\s"\']+',
+        r"\1[REDACTED]",
+        message,
+    )
+    return message[:500]
+
+
+def _safe_unavailable(exc: Exception, api_key: str | None = None) -> None:
+    print(
+        "SAFE_CODE\n"
+        "AI reviewer unavailable.\n"
+        f"Error type: {exc.__class__.__name__}\n"
+        f"Error message: {_safe_exception_message(exc, api_key)}"
+    )
+
+
 def main() -> int:
     diff = sys.stdin.read()
     if not diff.strip():
@@ -99,7 +125,7 @@ def main() -> int:
         )
         review_text = (response.text or "").strip()
     except Exception as exc:
-        _safe_skip(f"AI reviewer unavailable ({exc.__class__.__name__}); review skipped.")
+        _safe_unavailable(exc, api_key)
         return 0
 
     if not review_text:
