@@ -10,3 +10,4 @@ python-jose[cryptography]
 groq
 pytest
 httpx
+requests
