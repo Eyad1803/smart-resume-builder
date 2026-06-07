@@ -17,7 +17,15 @@ class Settings(BaseSettings):
     # Groq API key for AI features.
     groq_api_key: str
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    # Lab 8 Make.com webhook URL.
+    # Optional because FastAPI itself does not need it directly.
+    make_webhook_url: str | None = None
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
 
 @lru_cache
